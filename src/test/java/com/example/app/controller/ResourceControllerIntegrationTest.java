@@ -1,6 +1,7 @@
 package com.example.app.controller;
 
 import com.example.app.data.entity.Resource;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,13 +13,16 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 
+import java.net.InetAddress;
 import java.net.URI;
+import java.net.UnknownHostException;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @DisplayName("ResourceController_IntegrationTest")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@Slf4j
 class ResourceControllerIntegrationTest {
     @LocalServerPort
     private int port;
@@ -27,8 +31,11 @@ class ResourceControllerIntegrationTest {
 
     @DisplayName("Should return 201 CREATED")
     @Test
-    void createNew() {
-        final String url = "http://localhost:" + port + "/resources";
+    void createNew() throws UnknownHostException {
+        final String hostname = InetAddress.getLocalHost().getHostName();
+        final String url = "http://" + hostname + ":" + port + "/resources";
+
+        log.info("Url = {}", url);
 
         final var requestModel = new Resource();
         requestModel.setValue("Resource");
